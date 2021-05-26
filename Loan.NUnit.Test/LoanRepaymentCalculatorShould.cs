@@ -41,7 +41,7 @@ namespace Loan.NUnit.Test
 
 
         [Test]
-        [TestCaseSource(typeof(MonthlyRepaymentTestData),nameof(MonthlyRepaymentTestData.TestCases))]
+        [TestCaseSource(typeof(MonthlyRepaymentTestData), nameof(MonthlyRepaymentTestData.TestCases))]
         public void CalculateCorrectMonthlyRepayment_UsingTestCaseSource(decimal principal,
                                                     decimal interestRate,
                                                     int termInYears,
@@ -57,7 +57,7 @@ namespace Loan.NUnit.Test
 
 
         [Test]
-        [TestCaseSource(typeof(MonthlyRepaymentTestDataWithReturn),nameof(MonthlyRepaymentTestDataWithReturn.TestCases))]
+        [TestCaseSource(typeof(MonthlyRepaymentTestDataWithReturn), nameof(MonthlyRepaymentTestDataWithReturn.TestCases))]
         public decimal CalculateCorrectMonthlyRepayment_UsingTestCaseSourceWithReturn(decimal principal,
                                             decimal interestRate,
                                             int termInYears)
@@ -68,6 +68,63 @@ namespace Loan.NUnit.Test
                                      new LoanAmount("USD", principal),
                                      interestRate,
                                      new LoanTerm(termInYears));
+        }
+
+
+        [Test]
+        [TestCaseSource(typeof(MonthlyRepaymentCsvData), nameof(MonthlyRepaymentCsvData.GetTestCases), new object[] { "data.csv" })]
+        public void CalculateCorrectMonthlyRepayment_UsingTestCaseSource_CSV(decimal principal,
+                                                   decimal interestRate,
+                                                   int termInYears,
+                                                   decimal expectedMonthlyPayment)
+        {
+            var sut = new LoanRepaymentCalculator();
+            var monthlyPayment = sut.CalculateMonthlyRepayment(
+                                     new LoanAmount("USD", principal),
+                                     interestRate,
+                                     new LoanTerm(termInYears));
+            Assert.That(monthlyPayment, Is.EqualTo(expectedMonthlyPayment));
+        }
+
+
+        [Test]
+        public void CalculateCorrectMonthlyRepayment_Combinatorial(
+           [Values(100_000, 200_000, 500_000)] decimal principal,
+           [Values(6.5, 10, 20)] decimal interestRate,
+           [Values(10, 20, 30)] int termInYears)
+        {
+            var sut = new LoanRepaymentCalculator();
+
+            var monthlyPayment = sut.CalculateMonthlyRepayment(
+                new LoanAmount("USD", principal), interestRate, new LoanTerm(termInYears));
+        }
+
+        [Test]
+        [Sequential]
+        public void CalculateCorrectMonthlyRepayment_Sequential(
+                    [Values(200_000, 200_000, 500_000)] decimal principal,
+                    [Values(6.5, 10, 10)] decimal interestRate,
+                    [Values(30, 30, 30)] int termInYears,
+                    [Values(1264.14, 1755.14, 4387.86)] decimal expectedMonthlyPayment)
+        {
+            var sut = new LoanRepaymentCalculator();
+
+            var monthlyPayment = sut.CalculateMonthlyRepayment(
+                new LoanAmount("USD", principal), interestRate, new LoanTerm(termInYears));
+
+            Assert.That(monthlyPayment, Is.EqualTo(expectedMonthlyPayment));
+        }
+
+        [Test]
+        public void CalculateCorrectMonthlyRepayment_Range(
+            [Range(5, 10, 1)] decimal principal,
+            [Range(0.5, 20.00, 0.5)] decimal interestRate,
+            [Values(10, 20, 30)] int termInYears)
+        {
+            var sut = new LoanRepaymentCalculator();
+
+            sut.CalculateMonthlyRepayment(
+                new LoanAmount("USD", principal), interestRate, new LoanTerm(termInYears));
         }
     }
 }
