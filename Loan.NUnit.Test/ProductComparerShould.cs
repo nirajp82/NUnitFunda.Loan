@@ -1,18 +1,19 @@
 ﻿using Loan.Domain.Applications;
+using Loan.NUnit.Test.Constraints;
 using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Loan.NUnit.Test
 {
     [TestFixture]
-    [Category("Product")]
+    [ProductComparison]
     public class ProductComparerShould
     {
         private List<LoanProduct> _products;
         private ProductComparer _sut;
 
         [OneTimeSetUp]
-        public void OneTimeSetUp() 
+        public void OneTimeSetUp()
         {
         }
 
@@ -38,7 +39,7 @@ namespace Loan.NUnit.Test
         }
 
         [TearDown]
-        public void TearDown() 
+        public void TearDown()
         {
             // Runs after each test executes
             // sut.Dispose();
@@ -64,7 +65,7 @@ namespace Loan.NUnit.Test
 
         [Test]
         public void ReturnComparisonForFirstProduct()
-        {           
+        {
             List<MonthlyRepaymentComparison> comparisons =
                 _sut.CompareMonthlyRepayments(new LoanTerm(30));
 
@@ -87,11 +88,13 @@ namespace Loan.NUnit.Test
             //    .And
             //    .Property(nameof(MonthlyRepaymentComparison.MonthlyRepayment)).GreaterThan(1));
 
-            Assert.That(comparisons, Has.Exactly(1)
-                                       .Matches<MonthlyRepaymentComparison>(
-                                               item => item.ProductName == "LowRate" &&
-                                                       item.InterestRate == 1 &&
-                                                       item.MonthlyRepayment > 1));
-        }       
+            //Assert.That(comparisons, Has.Exactly(1)
+            //                           .Matches<MonthlyRepaymentComparison>(
+            //                                   item => item.ProductName == "LowRate" &&
+            //                                           item.InterestRate == 1 &&
+            //                                           item.MonthlyRepayment > 1));
+
+            Assert.That(comparisons, Has.Exactly(1).Matches(new MonthlyRepaymentGreaterThanZeroConstraint("LowRate", 1)));
+        }
     }
 }
