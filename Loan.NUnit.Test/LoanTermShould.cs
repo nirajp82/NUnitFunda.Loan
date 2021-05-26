@@ -71,12 +71,12 @@ namespace Loan.NUnit.Test
             Assert.That(() => new LoanTerm(0), Throws.TypeOf<ArgumentOutOfRangeException>()
                              .With
                              .Property("ParamName")
-                             .EqualTo(nameof(LoanTerm.Years)));
+                             .EqualTo(nameof(LoanTerm.Years).ToLower()));
 
             Assert.That(() => new LoanTerm(0), Throws.TypeOf<ArgumentOutOfRangeException>()
                                          .With
                                          .Matches<ArgumentOutOfRangeException>(
-                                             ex => ex.ParamName == nameof(LoanTerm.Years)));
+                                             ex => ex.ParamName == nameof(LoanTerm.Years).ToLower()));
         }
     }
 }
