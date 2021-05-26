@@ -16,4 +16,10 @@
     <ProjectReference Include="..\Loan.Domain\Loan.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
